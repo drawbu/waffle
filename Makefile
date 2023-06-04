@@ -1,10 +1,3 @@
-##
-## EPITECH PROJECT, 2023
-## star
-## File description:
-## Makefile
-##
-
 START_TIME := $(shell date +%s%3N)
 BUILD_DIR := .build
 
