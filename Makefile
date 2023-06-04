@@ -30,6 +30,8 @@ CFLAGS := -O2 -march=native
 CFLAGS += -iquote ./include
 CFLAGS += -U_FORTIFY_SOURCE
 
+LDLIBS := -lXft -lX11 -lXcursor -lXft -lfontconfig
+
 # ↓ Recipes
 OBJ := $(SRC:%.c=$(BUILD_DIR)/release/%.o)
 OBJ_DEBUG := $(DSRC:%.c=$(BUILD_DIR)/debug/%.o)
