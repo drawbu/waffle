@@ -1,0 +1,14 @@
+# IDE and editors
+.idea/
+
+# OS Files
+.DS_Store
+
+# Temporary files
+build/
+.envrc
+.direnv/
+
+# Binaries
+*.out
+*.a
