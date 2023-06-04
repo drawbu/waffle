@@ -1,62 +1,53 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <stdbool.h>
 
-int main(void)
-{
-    Display *display;
-    Window window;
+void handleKeyPress(XEvent event, bool *is_running) {
+    KeySym key = XLookupKeysym(&event.xkey, 0);
+
+    if (key == XK_a) {
+        printf("Opening kitty\n");
+        (void)system("kitty &");
+    }
+    if (key == XK_b) {
+        printf("Quitting\n");
+        *is_running = false;
+    }
+}
+
+void handleEvents(Display *display) {
     XEvent event;
-    char *msg = "Hello, World!";
-    int s;
- 
-    // open connection to the server
+    bool is_running = true;
+    XSelectInput(display, DefaultRootWindow(display), KeyPressMask);
+
+    while (is_running) {
+        XNextEvent(display, &event);
+        switch (event.type) {
+            case KeyPress:
+                handleKeyPress(event, &is_running);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+int main() {
+    Display *display;
+    int screen;
+    Window rootWindow;
+
     display = XOpenDisplay(NULL);
     if (display == NULL) {
-        fprintf(stderr, "Cannot open display\n");
-        exit(1);
+        fprintf(stderr, "Unable to open display\n");
+        return 1;
     }
- 
-    s = DefaultScreen(display);
- 
-    // create window
-    window = XCreateSimpleWindow(
-        display,
-        RootWindow(display, s),
-        10,
-        10,
-        200,
-        200,
-        1,
-        BlackPixel(display, s),
-        WhitePixel(display, s
-    ));
- 
-    // select kind of events we are interested in
-    XSelectInput(display, window, ExposureMask | KeyPressMask);
- 
-    // map (show) the window
-    XMapWindow(display, window);
- 
-    // event loop
-    while (true) {
-        XNextEvent(display, &event);
- 
-        // draw or redraw the window
-        if (event.type == Expose) {
-            XFillRectangle(display, window, DefaultGC(display, s), 20, 20, 10, 10);
-            XDrawString(display, window, DefaultGC(display, s), 50, 50, msg, strlen(msg));
-        }
-        // exit on key press
-        if (event.type == KeyPress)
-            break;
-    }
- 
-    // close connection to the server
+    screen = DefaultScreen(display);
+    rootWindow = RootWindow(display, screen);
+    XSelectInput(display, rootWindow, KeyPressMask);
+    handleEvents(display);
     XCloseDisplay(display);
- 
     return 0;
- }
+}
