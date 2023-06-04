@@ -1,14 +1,14 @@
-# IDE and editors
-.idea/
-
-# OS Files
-.DS_Store
-
-# Temporary files
-build/
-.envrc
-.direnv/
-
 # Binaries
-*.out
-*.a
+wm
+debug
+angry
+
+# IDE and editors
+.idea
+
+# Build
+.build
+
+# Env
+.envrc
+.direnv
