@@ -16,6 +16,11 @@
             gcc12
             gnumake
             man
+            xorg.libX11
+            xorg.libXft
+            xorg.libXfont
+            xorg.libXcursor
+            mesa
           ];
         };
       });
