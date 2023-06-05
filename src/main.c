@@ -15,7 +15,7 @@ typedef struct {
     unsigned int start_y;
 } mouse_mov_t;
 
-void handleKeyPress(XEvent *event, bool *is_running) {
+void handle_key_press(XEvent *event, bool *is_running) {
     XKeyEvent key = event->xkey;
     KeySym key_pressed = XLookupKeysym(&key, 0);
     unsigned int modifiers = key.state;
@@ -38,7 +38,7 @@ void handleKeyPress(XEvent *event, bool *is_running) {
     XFlush(key.display);
 }
 
-void handleMousePress(XEvent *event, mouse_mov_t *mouse) {
+void handle_mouse_press(XEvent *event, mouse_mov_t *mouse) {
     Window window = event->xbutton.subwindow;
 
     if (window == None || window == event->xbutton.root)
@@ -50,7 +50,7 @@ void handleMousePress(XEvent *event, mouse_mov_t *mouse) {
     mouse->start_y = event->xbutton.y_root;
 }
 
-void handleMouseRelease(XEvent *event, mouse_mov_t *mouse) {
+void handle_mouse_release(XEvent *event, mouse_mov_t *mouse) {
     mouse->dragging = false;
 }
 
@@ -67,7 +67,7 @@ void handleMouseMotion(XEvent *event, mouse_mov_t *mouse) {
     );
 }
 
-void handleEvents(Display *display) {
+void handle_events(Display *display) {
     XEvent event;
     bool is_running = true;
     Window root = DefaultRootWindow(display);
@@ -85,13 +85,13 @@ void handleEvents(Display *display) {
         XNextEvent(display, &event);
         switch (event.type) {
             case KeyPress:
-                handleKeyPress(&event, &is_running);
+                handle_key_press(&event, &is_running);
                 break;
             case ButtonPress:
-                handleMousePress(&event, &mouse);
+                handle_mouse_press(&event, &mouse);
                 break;
             case ButtonRelease:
-                handleMouseRelease(&event, &mouse);
+                handle_mouse_release(&event, &mouse);
                 break;
             case MotionNotify:
                 handleMouseMotion(&event, &mouse);
@@ -112,7 +112,7 @@ int main() {
         fprintf(stderr, "Unable to open display\n");
         return EXIT_FAILURE;
     }
-    handleEvents(display);
+    handle_events(display);
     XCloseDisplay(display);
     return EXIT_SUCCESS;
 }
