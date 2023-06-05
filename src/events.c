@@ -28,7 +28,6 @@ void handle_key_press(wm_state_t *wm_state)
         return;
     key.window = key.subwindow;
     XSendEvent(key.display, key.subwindow, False, KeyPressMask, (XEvent *)&key);
-    XFlush(key.display);
 }
 
 void handle_mouse_press(wm_state_t *wm_state)
@@ -58,34 +57,28 @@ void handle_mouse_release(wm_state_t *wm_state)
 
 void handle_mouse_motion(wm_state_t *wm_state)
 {
-    static XPoint delta = { 1 };
+    static vec_t vec;
+    static XPoint delta;
+    mouse_mov_t *mouse = wm_state->mouse;
     XEvent evt = wm_state->event;
 
     DEBUG_CALL(debug_mouse_motion, wm_state, true);
-    if (!wm_state->mouse->dragging)
+    if (!mouse->dragging)
         return;
-    if (wm_state->mouse->button == 1) {
-        get_motion_delta(&delta, &evt, wm_state->mouse);
-        set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
-        XMoveWindow(
-            evt.xbutton.display,
-            wm_state->mouse->window,
-            wm_state->mouse->window_attr.x + delta.x,
-            wm_state->mouse->window_attr.y + delta.y
-        );
-    } else if (wm_state->mouse->button == 3) {
-        get_motion_delta(&delta, &evt, wm_state->mouse);
-        set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
-        XResizeWindow(
-            evt.xbutton.display,
-            wm_state->mouse->window,
-            wm_state->mouse->window_attr.width + delta.x,
-            wm_state->mouse->window_attr.height + delta.y
-        );
+    if (mouse->button == 1) {
+        get_motion_delta(&delta, &evt, mouse);
+        set_window_on_top(evt.xbutton.display, mouse->window);
+        vec.x = mouse->window_attr.x + delta.x;
+        vec.y = mouse->window_attr.y + delta.y;
+        XMoveWindow(evt.xbutton.display, mouse->window, vec.x, vec.y);
+    } else if (mouse->button == 3) {
+        get_motion_delta(&delta, &evt, mouse);
+        set_window_on_top(evt.xbutton.display, mouse->window);
+        vec.x = mouse->window_attr.width + delta.x;
+        vec.y = mouse->window_attr.height + delta.y;
+        if (vec.x < 40 || vec.y < 40)
+            return;
+        XResizeWindow(evt.xbutton.display, mouse->window, vec.x, vec.y);
     }
-    DEBUG_CALL(
-        debug_win_rect,
-        evt.xbutton.display, wm_state->mouse->window,
-        true
-    );
+    DEBUG_CALL(debug_win_rect, evt.xbutton.display, mouse->window, true);
 }

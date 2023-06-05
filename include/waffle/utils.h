@@ -3,6 +3,11 @@
 
     #include <X11/Xlib.h>
 
+typedef struct {
+    int x;
+    int y;
+} vec_t;
+
 static inline
 void set_window_on_top(Display *display, Window window)
 {
