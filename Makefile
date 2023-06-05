@@ -9,6 +9,7 @@ NAME_ANGRY := angry
 
 VPATH := src
 SRC += main.c
+SRC += events.c
 
 # ↓ Debug only sources
 

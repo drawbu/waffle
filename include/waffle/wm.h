@@ -4,7 +4,12 @@
     #include <stdbool.h>
     #include <X11/Xlib.h>
 
-typedef struct mouse_mov_s mouse_mov_t;
+typedef struct {
+    bool dragging;
+    Window window;
+    XWindowAttributes window_attr;
+    XPoint start;
+} mouse_mov_t;
 
 typedef struct {
     mouse_mov_t *mouse;
