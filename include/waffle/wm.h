@@ -24,7 +24,11 @@ static inline
 void setup_grab(Display *display, Window root_id)
 {
     static int grab_event_pointer = (
-        PointerMotionMask | ButtonPressMask | ButtonReleaseMask
+        PointerMotionMask
+        | ButtonPressMask
+        | ButtonReleaseMask
+        | EnterWindowMask
+        | LeaveWindowMask
     );
 
     DEBUG("GEP: %d", grab_event_pointer);

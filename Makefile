@@ -11,6 +11,7 @@ VPATH := src
 SRC += main.c
 SRC += events.c
 SRC += events_debug.c
+SRC += cursor_events.c
 
 # ↓ Debug only sources
 

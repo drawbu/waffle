@@ -9,6 +9,9 @@ void handle_mouse_press(wm_state_t *wm_state);
 void handle_mouse_release(wm_state_t *wm_state);
 void handle_mouse_motion(wm_state_t *wm_state);
 
+void handle_enter(wm_state_t *wm_state);
+void handle_leave(wm_state_t *wm_state);
+
 typedef void (*event_callback_t)(wm_state_t *);
 
 static ATTR(used)
@@ -17,6 +20,9 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
     [ButtonPress] = &handle_mouse_press,
     [ButtonRelease] = &handle_mouse_release,
     [MotionNotify] = &handle_mouse_motion,
+
+    [EnterNotify] = &handle_enter,
+    [LeaveNotify] = &handle_leave,
 };
 
 static

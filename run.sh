@@ -3,7 +3,7 @@
 [ ! $# -eq 0 ] || exit
 target=$1
 
-[ ! -e $target ] && make $target
+make $target
 [ -e $target ] || exit
 
 xephyr=$(ps -ef | grep Xephyr | grep -v "grep" | wc -l)
