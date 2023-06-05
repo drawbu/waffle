@@ -36,7 +36,6 @@ void handle_mouse_press(wm_state_t *wm_state)
 
     if (window == None || window == wm_state->event.xbutton.root)
         return;
-    wm_state->mouse->dragging = true;
     wm_state->mouse->button = wm_state->event.xbutton.button;
     wm_state->mouse->window = window;
     wm_state->mouse->start.x = (short)wm_state->event.xbutton.x_root;
@@ -50,9 +49,13 @@ void handle_mouse_press(wm_state_t *wm_state)
 
 void handle_mouse_release(wm_state_t *wm_state)
 {
-    wm_state->mouse->dragging = false;
     DEBUG_CALL(debug_mouse_motion, wm_state, false);
     DEBUG_CALL(debug_win_rect, 0, 0, false);
+    wm_state->mouse->button = None;
+    if (wm_state->mouse->dragging) {
+        wm_state->mouse->dragging = false;
+        return;
+    }
 }
 
 void handle_mouse_motion(wm_state_t *wm_state)
@@ -63,8 +66,9 @@ void handle_mouse_motion(wm_state_t *wm_state)
     XEvent evt = wm_state->event;
 
     DEBUG_CALL(debug_mouse_motion, wm_state, true);
-    if (!mouse->dragging)
+    if (mouse->button == None)
         return;
+    mouse->dragging = true;
     if (mouse->button == 1) {
         get_motion_delta(&delta, &evt, mouse);
         set_window_on_top(evt.xbutton.display, mouse->window);
