@@ -14,7 +14,7 @@ typedef struct {
     unsigned int start_y;
 } mouse_mov_t;
 
-void handleKeyPress(XEvent *event, bool *is_running, Display *display) {
+void handleKeyPress(XEvent *event, bool *is_running) {
     KeySym key = XLookupKeysym(&event->xkey, 0);
     unsigned int modifiers = event->xkey.state;
 
@@ -28,24 +28,24 @@ void handleKeyPress(XEvent *event, bool *is_running, Display *display) {
         Window focusedWindow;
         int revertTo;
 
-        XGetInputFocus(display, &focusedWindow, &revertTo);
+        XGetInputFocus(event->xkey.display, &focusedWindow, &revertTo);
         if (focusedWindow != None && focusedWindow != event->xkey.window) {
             XKeyEvent keyEvent = event->xkey;
             keyEvent.window = focusedWindow;
-            XSendEvent(display, focusedWindow, False, KeyPressMask, (XEvent *)&keyEvent);
-            XFlush(display);
+            XSendEvent(event->xkey.display, focusedWindow, False, KeyPressMask, (XEvent *)&keyEvent);
+            XFlush(event->xkey.display);
         }
     }
 }
 
-void handleMousePress(XEvent *event, mouse_mov_t *mouse, Window root, Display *display) {
+void handleMousePress(XEvent *event, mouse_mov_t *mouse) {
     Window window = event->xbutton.subwindow;
 
-    if (window == None || window == root)
+    if (window == None || window == event->xbutton.root)
         return;
     mouse->dragging = true;
     mouse->window = window;
-    XGetWindowAttributes(display, mouse->window, &mouse->window_attr);
+    XGetWindowAttributes(event->xbutton.display, mouse->window, &mouse->window_attr);
     mouse->start_x = event->xbutton.x_root;
     mouse->start_y = event->xbutton.y_root;
 }
@@ -54,11 +54,11 @@ void handleMouseRelease(XEvent *event, mouse_mov_t *mouse) {
     mouse->dragging = false;
 }
 
-void handleMouseMotion(XEvent *event, mouse_mov_t *mouse, Display *display) {
+void handleMouseMotion(XEvent *event, mouse_mov_t *mouse) {
     if (!mouse->dragging)
         return;
     XMoveResizeWindow(
-        display,
+        event->xbutton.display,
         mouse->window,
         mouse->window_attr.x + (event->xbutton.x_root - mouse->start_x),
         mouse->window_attr.y + (event->xbutton.y_root - mouse->start_y),
@@ -85,16 +85,16 @@ void handleEvents(Display *display) {
         XNextEvent(display, &event);
         switch (event.type) {
             case KeyPress:
-                handleKeyPress(&event, &is_running, display);
+                handleKeyPress(&event, &is_running);
                 break;
             case ButtonPress:
-                handleMousePress(&event, &mouse, root, display);
+                handleMousePress(&event, &mouse);
                 break;
             case ButtonRelease:
                 handleMouseRelease(&event, &mouse);
                 break;
             case MotionNotify:
-                handleMouseMotion(&event, &mouse, display);
+                handleMouseMotion(&event, &mouse);
                 break;
             default:
                 break;
