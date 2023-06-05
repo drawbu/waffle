@@ -3,6 +3,11 @@
 
     #include <X11/Xlib.h>
 
-void set_window_on_top(Display *display, Window window);
+static inline
+void set_window_on_top(Display *display, Window window)
+{
+    XRaiseWindow(display, window);
+    XFlush(display);
+}
 
 #endif /* !UTILS_H_ */

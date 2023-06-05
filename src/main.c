@@ -8,30 +8,6 @@
 #include "waffle/wm.h"
 #include "waffle/events.h"
 
-void setup_grab(Display *display, Window root_id)
-{
-    static int grab_event_pointer = (
-        PointerMotionMask | ButtonPressMask | ButtonReleaseMask
-    );
-
-    DEBUG("GEP: %d", grab_event_pointer);
-    XGrabPointer(
-        display, root_id, False,
-        grab_event_pointer, GrabModeAsync, GrabModeAsync,
-        None, None, CurrentTime
-    );
-    XGrabKeyboard(
-        display, root_id, True,
-        GrabModeAsync, GrabModeAsync, CurrentTime
-    );
-}
-
-void remove_grab(Display *display)
-{
-    XUngrabPointer(display, CurrentTime);
-    XUngrabKeyboard(display, CurrentTime);
-}
-
 void wm_run(Display *display)
 {
     Window root = DefaultRootWindow(display);

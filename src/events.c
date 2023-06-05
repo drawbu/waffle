@@ -52,18 +52,20 @@ void handle_mouse_press(wm_state_t *wm_state)
 void handle_mouse_release(wm_state_t *wm_state)
 {
     wm_state->mouse->dragging = false;
+    DEBUG_CALL(debug_mouse_motion, wm_state, false);
+    DEBUG_CALL(debug_win_rect, 0, 0, false);
 }
 
 void handle_mouse_motion(wm_state_t *wm_state)
 {
+    static XPoint delta = { 1 };
     XEvent evt = wm_state->event;
-    XPoint delta;
 
+    DEBUG_CALL(debug_mouse_motion, wm_state, true);
     if (!wm_state->mouse->dragging)
         return;
     if (wm_state->mouse->button == 1) {
-        delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
-        delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        get_motion_delta(&delta, &evt, wm_state->mouse);
         set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
         XMoveWindow(
             evt.xbutton.display,
@@ -72,8 +74,7 @@ void handle_mouse_motion(wm_state_t *wm_state)
             wm_state->mouse->window_attr.y + delta.y
         );
     } else if (wm_state->mouse->button == 3) {
-        delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
-        delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        get_motion_delta(&delta, &evt, wm_state->mouse);
         set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
         XResizeWindow(
             evt.xbutton.display,
@@ -82,4 +83,9 @@ void handle_mouse_motion(wm_state_t *wm_state)
             wm_state->mouse->window_attr.height + delta.y
         );
     }
+    DEBUG_CALL(
+        debug_win_rect,
+        evt.xbutton.display, wm_state->mouse->window,
+        true
+    );
 }
