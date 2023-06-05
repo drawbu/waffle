@@ -46,8 +46,11 @@ void wm_run(Display *display)
     while (wm.is_running) {
         XNextEvent(display, &wm.event);
         event_callback = EVENT_TABLE[wm.event.type];
-        if (event_callback)
-            event_callback(&wm);
+        if (!event_callback) {
+            DEBUG("Missing callback for event [%d]", wm.event.type);
+            continue;
+        }
+        event_callback(&wm);
     }
     remove_grab(display);
 }
@@ -63,6 +66,7 @@ int main(void)
     DEBUG("Display size: [%d, %d]",
         XDisplayWidth(display, 0), XDisplayHeight(display, 0));
     wm_run(display);
+    DEBUG_MSG("Closing server");
     XCloseDisplay(display);
     return EXIT_SUCCESS;
 }
