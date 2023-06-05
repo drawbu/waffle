@@ -6,6 +6,7 @@
 
 typedef struct {
     bool dragging;
+    unsigned int button;
     Window window;
     XWindowAttributes window_attr;
     XPoint start;

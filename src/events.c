@@ -5,6 +5,7 @@
 #include <X11/keysym.h>
 
 #include "waffle/events.h"
+#include "debug.h"
 
 void handle_key_press(wm_state_t *wm_state)
 {
@@ -36,6 +37,7 @@ void handle_mouse_press(wm_state_t *wm_state)
     if (window == None || window == wm_state->event.xbutton.root)
         return;
     wm_state->mouse->dragging = true;
+    wm_state->mouse->button = wm_state->event.xbutton.button;
     wm_state->mouse->window = window;
     wm_state->mouse->start.x = (short)wm_state->event.xbutton.x_root;
     wm_state->mouse->start.y = (short)wm_state->event.xbutton.y_root;
@@ -58,12 +60,23 @@ void handle_mouse_motion(wm_state_t *wm_state)
 
     if (!wm_state->mouse->dragging)
         return;
-    delta.x = (short)(evt.xbutton.x_root - wm_state->mouse->start.x);
-    delta.y = (short)(evt.xbutton.y_root - wm_state->mouse->start.y);
-    XMoveWindow(
-        evt.xbutton.display,
-        wm_state->mouse->window,
-        wm_state->mouse->window_attr.x + delta.x,
-        wm_state->mouse->window_attr.y + delta.y
-    );
+    if (wm_state->mouse->button == 1) {
+        delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
+        delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        XMoveWindow(
+            evt.xbutton.display,
+            wm_state->mouse->window,
+            wm_state->mouse->window_attr.x + delta.x,
+            wm_state->mouse->window_attr.y + delta.y
+        );
+    } else if (wm_state->mouse->button == 3) {
+        delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
+        delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        XResizeWindow(
+            evt.xbutton.display,
+            wm_state->mouse->window,
+            wm_state->mouse->window_attr.width + delta.x,
+            wm_state->mouse->window_attr.height + delta.y
+        );
+    }
 }
