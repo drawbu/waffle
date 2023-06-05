@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "colors.h"
+#include "debug.h"
 
 typedef struct {
     bool dragging;
@@ -15,27 +16,26 @@ typedef struct {
 } mouse_mov_t;
 
 void handleKeyPress(XEvent *event, bool *is_running) {
-    KeySym key = XLookupKeysym(&event->xkey, 0);
-    unsigned int modifiers = event->xkey.state;
+    XKeyEvent key = event->xkey;
+    KeySym key_pressed = XLookupKeysym(&key, 0);
+    unsigned int modifiers = key.state;
+    Window focused_window = key.subwindow;
 
-    if (modifiers & Mod4Mask && key == XK_Return) {
+    if (modifiers & Mod4Mask && key_pressed == XK_Return) {
         printf("Opening kitty\n");
         (void)system("kitty &");
-    } else if (key == XK_b) {
+        return;
+    }
+    if (key_pressed == XK_b) {
         printf("Quitting\n");
         *is_running = false;
-    } else {
-        Window focusedWindow;
-        int revertTo;
-
-        XGetInputFocus(event->xkey.display, &focusedWindow, &revertTo);
-        if (focusedWindow != None && focusedWindow != event->xkey.window) {
-            XKeyEvent keyEvent = event->xkey;
-            keyEvent.window = focusedWindow;
-            XSendEvent(event->xkey.display, focusedWindow, False, KeyPressMask, (XEvent *)&keyEvent);
-            XFlush(event->xkey.display);
-        }
+        return;
     }
+    if (focused_window == None || focused_window == event->xkey.window)
+        return;
+    key.window = focused_window;
+    XSendEvent(key.display, focused_window, False, KeyPressMask, (XEvent *)&key);
+    XFlush(key.display);
 }
 
 void handleMousePress(XEvent *event, mouse_mov_t *mouse) {
