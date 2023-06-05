@@ -5,6 +5,7 @@
 #include <X11/keysym.h>
 
 #include "waffle/events.h"
+#include "waffle/utils.h"
 #include "debug.h"
 
 void handle_key_press(wm_state_t *wm_state)
@@ -63,6 +64,7 @@ void handle_mouse_motion(wm_state_t *wm_state)
     if (wm_state->mouse->button == 1) {
         delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
         delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
         XMoveWindow(
             evt.xbutton.display,
             wm_state->mouse->window,
@@ -72,6 +74,7 @@ void handle_mouse_motion(wm_state_t *wm_state)
     } else if (wm_state->mouse->button == 3) {
         delta.x = (short) (evt.xbutton.x_root - wm_state->mouse->start.x);
         delta.y = (short) (evt.xbutton.y_root - wm_state->mouse->start.y);
+        set_window_on_top(evt.xbutton.display, wm_state->mouse->window);
         XResizeWindow(
             evt.xbutton.display,
             wm_state->mouse->window,
