@@ -9,6 +9,7 @@
 typedef struct {
     bool dragging;
     unsigned int button;
+    char side;
     Window window;
     XWindowAttributes window_attr;
     XPoint start;
