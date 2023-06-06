@@ -5,11 +5,12 @@
     #include <X11/Xlib.h>
 
     #include "debug.h"
+    #include "utils.h"
 
 typedef struct {
     bool dragging;
     unsigned int button;
-    char side;
+    direction_t side;
     Window window;
     XWindowAttributes window_attr;
     XPoint start;
