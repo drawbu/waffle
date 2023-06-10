@@ -28,7 +28,7 @@ void wm_run(Display *display)
         }
         event_callback(&wm);
     }
-    remove_grab(display);
+    remove_grab(display, root);
 }
 
 int main(void)
