@@ -115,9 +115,9 @@ void handle_mouse_motion(wm_state_t *wm_state)
     if (mouse->button == None)
         return;
     mouse->dragging = true;
-    if (mouse->button == 1)
+    if (mouse->button == Button1)
         move_window(mouse, &evt);
-    else if (mouse->button == 3)
+    else if (mouse->button == Button3)
         resize_window(mouse, &evt);
     DEBUG_CALL(debug_win_rect, evt.xbutton.display, mouse->window, true);
 }
