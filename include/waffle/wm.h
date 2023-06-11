@@ -3,6 +3,7 @@
 
     #include <stdbool.h>
     #include <X11/Xlib.h>
+    #include <X11/keysym.h>
 
     #include "debug.h"
     #include "utils.h"
@@ -34,10 +35,10 @@ void setup_grab(Display *display, Window root_id)
     );
 
     DEBUG("GEP: %d", grab_event_pointer);
-    XGrabPointer(
-        display, root_id, False,
-        grab_event_pointer, GrabModeAsync, GrabModeAsync,
-        None, None, CurrentTime
+    XGrabButton(
+        display, Button1Mask | Button3Mask, Mod4Mask,
+        root_id, False, grab_event_pointer,
+        GrabModeAsync, GrabModeSync, None, None
     );
     XGrabKeyboard(
         display, root_id, True,
@@ -46,9 +47,9 @@ void setup_grab(Display *display, Window root_id)
 }
 
 static inline
-void remove_grab(Display *display)
+void remove_grab(Display *display, Window root_id)
 {
-    XUngrabPointer(display, CurrentTime);
+    XUngrabButton(display, AnyButton, AnyModifier, root_id);
     XUngrabKeyboard(display, CurrentTime);
 }
 
