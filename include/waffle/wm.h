@@ -36,7 +36,7 @@ void setup_grab(Display *display, Window root_id)
 
     DEBUG("GEP: %d", grab_event_pointer);
     XGrabButton(
-        display, Button1Mask | Button3Mask, ControlMask,
+        display, Button1Mask | Button3Mask, Mod4Mask,
         root_id, False, grab_event_pointer,
         GrabModeAsync, GrabModeSync, None, None
     );
