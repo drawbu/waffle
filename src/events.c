@@ -28,41 +28,14 @@ void handle_key_press(wm_state_t *wm_state)
     XSendEvent(key.display, key.subwindow, False, KeyPressMask, (XEvent *)&key);
 }
 
-static
-void get_windows(Display *display, Window root)
-{
-    unsigned int count;
-    Window root_return;
-    Window parent_return;
-    Window *windows = NULL;
-    XWindowAttributes wa;
-
-    if (!XQueryTree(display, root, &root_return, &parent_return, &windows, &count)
-        || windows == NULL
-    ) {
-        printf("Failed to query windows tree\n");
-        return;
-    }
-    for (unsigned int i = 0; i < count; i++) {
-        Window window = windows[i];
-
-        if (!XGetWindowAttributes(display, window, &wa))
-            continue;
-        if (wa.map_state != IsViewable)
-            continue;
-        XSelectInput(
-            display, window,
-            EnterWindowMask | LeaveWindowMask | SubstructureNotifyMask | SubstructureRedirectMask
-        );
-    }
-    XFree(windows);
-}
-
 void handle_map_request(wm_state_t *wm_state)
 {
     XMapRequestEvent event = wm_state->event.xmaprequest;
 
     DEBUG_MSG("Map of the windows requested");
     XMapWindow(event.display, event.window);
-    get_windows(event.display, DefaultRootWindow(event.display));
+    XSelectInput(
+        event.display, event.window,
+        EnterWindowMask | LeaveWindowMask | SubstructureRedirectMask
+    );
 }
