@@ -18,6 +18,7 @@ void wm_run(Display *display)
     };
 
     printf("%sWaffle%s is running!\n", RED, RESET);
+    map_windows(display, root);
     setup_grab(display, root);
     while (wm.is_running) {
         XNextEvent(display, &wm.event);
