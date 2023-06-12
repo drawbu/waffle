@@ -21,6 +21,7 @@ typedef struct {
     mouse_mov_t *mouse;
     bool is_running;
     XEvent event;
+    Window focused_window;
 } wm_state_t;
 
 static inline

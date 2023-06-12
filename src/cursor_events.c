@@ -3,17 +3,15 @@
 #include "waffle/wm.h"
 
 void handle_enter(wm_state_t *wm_state) {
-    XEvent event = wm_state->event;
-    Window entered_window = event.xcrossing.window;
+    XCrossingEvent event = wm_state->event.xcrossing;
 
-    DEBUG("focus:   %lu", entered_window);
+    wm_state->focused_window = event.window;
+    DEBUG("focus:    %lu", wm_state->focused_window);
 
 }
 
 void handle_leave(wm_state_t *wm_state) {
-    XEvent event = wm_state->event;
-
-    DEBUG("unfocus: %lu", event.xcrossing.window);
+    DEBUG("unfocus: %lu", wm_state->focused_window);
 }
 
 static
