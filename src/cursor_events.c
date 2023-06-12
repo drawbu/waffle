@@ -1,42 +1,19 @@
-#include <X11/cursorfont.h>
+#include "debug.h"
 #include "waffle/events.h"
 #include "waffle/wm.h"
 
-void handle_enter(wm_state_t *wm_state)
-{
-    static Cursor default_cursor = 0;
+void handle_enter(wm_state_t *wm_state) {
+    XEvent event = wm_state->event;
+    Window entered_window = event.xcrossing.window;
 
-    DEBUG("%sEvent%s: Enter", YELLOW, RESET);
-    if (!default_cursor)
-        default_cursor = XCreateFontCursor(
-                wm_state->event.xbutton.display, XC_gumby);
-    XDefineCursor(
-        wm_state->event.xbutton.display,
-        wm_state->event.xcrossing.window,
-        default_cursor
-    );
-    XWarpPointer(
-        wm_state->event.xbutton.display, None,
-        wm_state->event.xbutton.root, 0, 0, 0, 0,
-        wm_state->mouse->start.x,
-        wm_state->mouse->start.y
-    );
-    XFlush(wm_state->event.xbutton.display);
+    DEBUG("focus:   %lu", entered_window);
+
 }
 
-void handle_leave(wm_state_t *wm_state)
-{
-    static Cursor default_cursor = 0;
+void handle_leave(wm_state_t *wm_state) {
+    XEvent event = wm_state->event;
 
-    DEBUG("%sEvent%s: Leave", YELLOW, RESET);
-    if (!default_cursor)
-        default_cursor = XCreateFontCursor(
-            wm_state->event.xbutton.display, XC_boat);
-    XDefineCursor(
-        wm_state->event.xbutton.display,
-        wm_state->event.xcrossing.window,
-        default_cursor
-    );
+    DEBUG("unfocus: %lu", event.xcrossing.window);
 }
 
 static
