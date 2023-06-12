@@ -57,3 +57,12 @@ void get_windows(Display *display, Window root)
     }
     XFree(windows);
 }
+
+void handle_map_request(wm_state_t *wm_state)
+{
+    XMapRequestEvent event = wm_state->event.xmaprequest;
+
+    DEBUG_MSG("Map of the windows requested");
+    XMapWindow(event.display, event.window);
+    get_windows(event.display, DefaultRootWindow(event.display));
+}
