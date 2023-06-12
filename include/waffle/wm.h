@@ -30,11 +30,13 @@ void setup_grab(Display *display, Window root_id)
         PointerMotionMask
         | ButtonPressMask
         | ButtonReleaseMask
-        | EnterWindowMask
-        | LeaveWindowMask
     );
 
     DEBUG("GEP: %d", grab_event_pointer);
+    XSelectInput(
+        display, root_id,
+        EnterWindowMask | LeaveWindowMask| SubstructureRedirectMask
+    );
     XGrabButton(
         display, Button1Mask | Button3Mask, Mod4Mask,
         root_id, False, grab_event_pointer,
