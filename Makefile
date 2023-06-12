@@ -1,7 +1,7 @@
 START_TIME := $(shell date +%s%3N)
 BUILD_DIR := .build
 
-NAME := wm
+NAME := waffle
 NAME_DEBUG := debug
 NAME_ANGRY := angry
 
