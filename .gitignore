@@ -13,3 +13,7 @@ maker
 # Env
 .envrc
 .direnv
+
+# Excluded directories
+!src/waffle
+!src/maker
