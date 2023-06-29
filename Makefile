@@ -7,7 +7,7 @@ NAME_ANGRY := angry
 
 # ↓ Sources
 
-VPATH := src
+VPATH := src/waffle
 SRC += main.c
 SRC += events.c
 SRC += events_debug.c
