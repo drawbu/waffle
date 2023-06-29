@@ -6,7 +6,7 @@ target=$1
 make $target
 [ -e $target ] || exit
 
-gcc -o maker src/maker/main.c -g3 -fsanitize=address,leak,undefined -lasan
+gcc -o maker src/maker/main.c -g3
 
 xephyr=$(ps -ef | grep Xephyr | grep -v "grep" | wc -l)
 
