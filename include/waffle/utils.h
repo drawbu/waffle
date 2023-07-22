@@ -1,7 +1,9 @@
 #ifndef UTILS_H_
     #define UTILS_H_
 
+    #include <stdio.h>
     #include <X11/Xlib.h>
+    #include "debug.h"
 
 typedef struct {
     int x;

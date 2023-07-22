@@ -6,8 +6,6 @@ target=$1
 make $target
 [ -e $target ] || exit
 
-gcc -o maker src/maker/main.c -g3
-
 xephyr=$(ps -ef | grep Xephyr | grep -v "grep" | wc -l)
 
 if [ $xephyr -eq 0 ]
@@ -18,5 +16,5 @@ then
     export DISPLAY=:1
 fi
 
-./maker $target
+./$target "hot-reload"
 pkill -f Xephyr
