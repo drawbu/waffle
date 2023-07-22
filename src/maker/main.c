@@ -17,7 +17,8 @@ char *get_run_cmd(char *target)
     return result;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     char *cmd = get_run_cmd(argc >= 2 ? argv[1] : NULL);
     int return_val;
 
