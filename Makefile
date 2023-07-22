@@ -33,6 +33,12 @@ OBJ := $(SRC:%.c=$(BUILD_DIR)/release/%.o)
 OBJ_DEBUG := $(DSRC:%.c=$(BUILD_DIR)/debug/%.o)
 OBJ_ANGRY := $(DSRC:%.c=$(BUILD_DIR)/angry/%.o)
 
+DEPFLAGS := -MMD -MP
+
+DEPS := $(OBJ:.o=.d)
+DEPS_DEBUG := $(OBJ_DEBUG:.o=.d)
+DEPS_ANGRY := $(OBJ_ANGRY:.o=.d)
+
 NAMES += $(NAME)
 NAMES += $(NAME_DEBUG)
 NAMES += $(NAME_ANGRY)
@@ -113,7 +119,7 @@ $(NAME): $(OBJ)
 $(BUILD_DIR)/release/%.o: HEADER += "release"
 $(BUILD_DIR)/release/%.o: %.c
 	@ mkdir -p $(dir $@)
-	$Q $(CC) $(CFLAGS) -c $< -o $@
+	$Q $(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(call LOG, ":c" $(notdir $@))
 
 $(NAME_DEBUG): CFLAGS += -g3 -D DEBUG_MODE
@@ -124,7 +130,7 @@ $(NAME_DEBUG): $(OBJ_DEBUG)
 
 $(BUILD_DIR)/debug/%.o: %.c
 	@ mkdir -p $(dir $@)
-	$Q $(CC) $(CFLAGS) -c $< -o $@
+	$Q $(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(call LOG, ":c" $(notdir $@))
 
 $(NAME_ANGRY): CFLAGS += -D DEBUG_MODE
@@ -137,7 +143,7 @@ $(NAME_ANGRY): $(OBJ_ANGRY)
 
 $(BUILD_DIR)/angry/%.o: %.c
 	@ mkdir -p $(dir $@)
-	$Q $(CC) $(CFLAGS) -c $< -o $@
+	$Q $(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
 	$(call LOG, ":c" $(notdir $@))
 
 clean:
@@ -165,3 +171,8 @@ re:	fclean
 
 %.c:
 	$(call SENTINEL, $@)
+
+-include $(DEPS)
+-include $(DEPS_DEBUG)
+-include $(DEPS_ANGRY)
+
