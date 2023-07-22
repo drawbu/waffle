@@ -7,7 +7,7 @@ NAME_ANGRY := angry
 
 # ↓ Sources
 
-VPATH := src/waffle
+VPATH := src
 SRC += main.c
 SRC += events.c
 SRC += events_debug.c
@@ -112,11 +112,11 @@ all: $(NAME)
 
 .PHONY: all
 
+$(NAME): HEADER += "release"
 $(NAME): $(OBJ)
 	$Q $(CC) $(CFLAGS) $(LIBFLAGS) $(LDLIBS) -o $@ $^
 	$(call LOG,":g$@")
 
-$(BUILD_DIR)/release/%.o: HEADER += "release"
 $(BUILD_DIR)/release/%.o: %.c
 	@ mkdir -p $(dir $@)
 	$Q $(CC) $(DEPFLAGS) $(CFLAGS) -c $< -o $@
