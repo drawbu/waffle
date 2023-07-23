@@ -12,6 +12,7 @@ void handle_mouse_motion(wm_state_t *wm_state);
 void handle_enter(wm_state_t *wm_state);
 void handle_leave(wm_state_t *wm_state);
 
+void handle_map_notify(wm_state_t *wm_state);
 void handle_map_request(wm_state_t *wm_state);
 
 typedef void (*event_callback_t)(wm_state_t *);
@@ -26,6 +27,7 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
     [EnterNotify] = &handle_enter,
     [LeaveNotify] = &handle_leave,
 
+    [MapNotify] = &handle_map_notify,
     [MapRequest] = &handle_map_request,
 };
 

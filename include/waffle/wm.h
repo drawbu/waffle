@@ -2,9 +2,11 @@
     #define WM_H_
 
     #include <stdbool.h>
+    
+    #include <X11/X.h>
     #include <X11/Xlib.h>
     #include <X11/keysym.h>
-
+    
     #include "debug.h"
     #include "utils.h"
 
@@ -36,7 +38,10 @@ void setup_grab(Display *display, Window root_id)
     DEBUG("GEP: %d", grab_event_pointer);
     XSelectInput(
         display, root_id,
-        EnterWindowMask | LeaveWindowMask| SubstructureRedirectMask
+        EnterWindowMask
+        | LeaveWindowMask
+        | SubstructureRedirectMask
+        | SubstructureNotifyMask
     );
     XGrabButton(
         display, Button1Mask | Button3Mask, Mod4Mask,

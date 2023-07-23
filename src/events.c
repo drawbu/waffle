@@ -36,6 +36,41 @@ void handle_map_request(wm_state_t *wm_state)
     XMapWindow(event.display, event.window);
     XSelectInput(
         event.display, event.window,
-        EnterWindowMask | LeaveWindowMask | SubstructureRedirectMask
+        EnterWindowMask
+        | LeaveWindowMask
+        | SubstructureRedirectMask
+        | SubstructureNotifyMask
     );
 }
+
+void handle_map_notify(wm_state_t *wm_state)
+{
+    static int magic = -1;
+    unsigned long border_color = 0xff0000;
+    unsigned long background_color = 0x000000;
+    Window bordered_window;
+    XSetWindowAttributes attributes;
+    XWindowAttributes win_attr;
+    XMapEvent event = wm_state->event.xmap;
+
+    DEBUG("state of magic: %d", magic);
+    if (--magic & 1)
+        return;
+    XGetWindowAttributes(event.display, event.window, &win_attr);
+    attributes.border_pixel = border_color;
+    attributes.background_pixel = background_color;
+
+    bordered_window = XCreateWindow(
+        event.display, 
+        RootWindow(event.display, 0), 
+        -2, -2, win_attr.width, win_attr.height, 2,
+        CopyFromParent, InputOutput, CopyFromParent, CWBackPixel | CWBorderPixel,
+        &attributes
+    );
+
+    XMapWindow(event.display, bordered_window);
+    XReparentWindow(event.display, event.window, bordered_window, -2, -2);
+    XMapWindow(event.display, event.window);
+    XFlush(event.display);
+}
+

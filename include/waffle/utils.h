@@ -59,7 +59,10 @@ void map_windows(Display *display, Window root)
             continue;
         XSelectInput(
             display, window,
-            EnterWindowMask | LeaveWindowMask | SubstructureRedirectMask
+            EnterWindowMask 
+            | LeaveWindowMask
+            | SubstructureNotifyMask
+            | SubstructureRedirectMask
         );
     }
     XFree(windows);
