@@ -2,18 +2,12 @@
 waffle
 debug
 angry
-maker
-
-# IDE and editors
-.idea
 
 # Build
 .build
+.fast
 
 # Env
 .envrc
 .direnv
 
-# Excluded directories
-!src/waffle
-!src/maker
