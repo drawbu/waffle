@@ -3,6 +3,9 @@ waffle
 debug
 angry
 
+# include fix
+!include/waffle
+
 # Build
 .build
 .fast
