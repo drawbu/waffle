@@ -9,6 +9,7 @@
       with import nixpkgs { inherit system; }; {
         devShells.default = mkShell {
           packages = [
+            python311Packages.compiledb
             gcc12
             glibc
             ltrace

@@ -3,12 +3,11 @@ waffle
 debug
 angry
 
-# IDE and editors
-.idea
-
 # Build
 .build
+.fast
 
 # Env
 .envrc
 .direnv
+

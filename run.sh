@@ -16,5 +16,5 @@ then
     export DISPLAY=:1
 fi
 
-./$target
+./$target "hot-reload"
 pkill -f Xephyr

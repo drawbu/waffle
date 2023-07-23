@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
+#include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #include "colors.h"
 #include "debug.h"
@@ -32,7 +34,7 @@ void wm_run(Display *display)
     remove_grab(display, root);
 }
 
-int main(void)
+int wm_start(void)
 {
     Display *display = XOpenDisplay(NULL);
 
@@ -47,3 +49,42 @@ int main(void)
     XCloseDisplay(display);
     return EXIT_SUCCESS;
 }
+
+static 
+int hot_reload_run(char *prog_name)
+{   
+    char command[256] = { '\0' };
+    char *argv[2] = { prog_name, NULL };
+    int status = snprintf(command, 64, "make %s", prog_name);
+
+    DEBUG("%sRunning hot loader hook...%s", YELLOW, RESET);
+    if (status == -1)
+        return EXIT_FAILURE;
+    status = system(command);
+    DEBUG("-> got status: %s%d%s", YELLOW, status, RESET);
+    if (status == -1)
+        return EXIT_FAILURE;
+    status = execlp(prog_name, prog_name, "hot-reload", NULL);
+    DEBUG(
+        "%sGOT STATUS [%d] WHILE TRYING TO HOT RELOAD!!!%s",
+        RED, status, RESET
+    );
+    return EXIT_FAILURE;
+}
+
+int main(int argc, char **argv)
+{
+    bool ret;
+    bool hot_reload = argc == 2 && !strcmp(argv[1], "hot-reload");
+
+    if (hot_reload)
+        DEBUG(
+            "%shot-reload%s hook set to [%s%s%s]",
+            YELLOW, RESET, CYAN, argv[0], RESET
+        );
+    ret = wm_start();
+    if (hot_reload)
+        hot_reload_run(argv[0]);
+    return ret;
+}
+
