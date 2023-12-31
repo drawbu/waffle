@@ -30,13 +30,6 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
     [MapRequest] = &handle_map_request,
 };
 
-static
-void get_motion_delta(XPoint *delta, XEvent *evt, mouse_mov_t *mouse)
-{
-    delta->x = (short) (evt->xbutton.x_root - mouse->start.x);
-    delta->y = (short) (evt->xbutton.y_root - mouse->start.y);
-}
-
     #ifdef DEBUG_MODE
 void debug_mouse_motion(wm_state_t *wm_state, bool mode);
 void debug_win_rect(Display *display, Window win, bool mode);

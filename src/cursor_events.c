@@ -11,9 +11,16 @@ void handle_enter(wm_state_t *wm_state)
 
 }
 
-void handle_leave(wm_state_t *wm_state)
+void handle_leave(wm_state_t *wm_state DEBUG_USED)
 {
     DEBUG("unfocus: %lu", wm_state->focused_window);
+}
+
+static
+void get_motion_delta(XPoint *delta, XEvent *evt, mouse_mov_t *mouse)
+{
+    delta->x = (short) (evt->xbutton.x_root - mouse->start.x);
+    delta->y = (short) (evt->xbutton.y_root - mouse->start.y);
 }
 
 static
@@ -23,7 +30,7 @@ direction_t retrieve_mouse_side(mouse_mov_t *mouse, XEvent *event)
     int rel_y = event->xbutton.y_root - mouse->window_attr.y;
     bool right = rel_x > mouse->window_attr.width / 2;
     bool bottom = rel_y > mouse->window_attr.height / 2;
-    return (bottom << 1) | right;
+    return (direction_t)((bottom << 1) | right);
 }
 
 void handle_mouse_press(wm_state_t *wm_state)
@@ -88,7 +95,7 @@ void resize_window(mouse_mov_t *mouse, XEvent *evt)
     DEBUG("width=%d, height=%d", vec.width, vec.height);
     XMoveResizeWindow(
         evt->xbutton.display, mouse->window,
-        vec.x, vec.y, vec.width, vec.height
+        vec.x, vec.y, (unsigned int)vec.width, (unsigned int)vec.height
     );
 }
 

@@ -3,7 +3,7 @@
 
     #include <stddef.h>
 
-    #define COL_FMT(n) "\e[" #n "m"
+    #define COL_FMT(n) "\033[" #n "m"
 
     #define RESET COL_FMT(0)
     #define BOLD COL_FMT(1)

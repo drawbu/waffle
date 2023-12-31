@@ -29,7 +29,7 @@ STIME := $(call NOW)
 
 TIME_NS = $(shell expr $(call NOW) - $(STIME))
 TIME_MS = $(shell expr $(call TIME_NS))
-LOG_TIME = echo -e "[ $(C_BLUE)$(call TIME_MS)$(C_RESET) ]"
+LOG_TIME = printf "[$(C_BLUE) %6s $(C_RESET)] %b\n" "$(call TIME_MS)"
 
 BUILD_DIR := .build
 OUT := waffle
@@ -84,6 +84,8 @@ SRC += main.c
 SRC += events.c
 SRC += events_debug.c
 SRC += cursor_events.c
+SRC += grab.c
+SRC += window_action.c
 
 LIB := $(BUILD_DIR)/libquell.a
 

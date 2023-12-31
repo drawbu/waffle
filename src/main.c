@@ -11,6 +11,7 @@
 #include "waffle/events.h"
 #include "waffle/wm.h"
 
+static
 void wm_run(Display *display)
 {
     Window root = DefaultRootWindow(display);
@@ -35,6 +36,7 @@ void wm_run(Display *display)
     remove_grab(display, root);
 }
 
+static
 int wm_start(void)
 {
     Display *display = XOpenDisplay(NULL);
@@ -55,7 +57,6 @@ static
 int hot_reload_run(char *prog_name)
 {
     char command[256] = { '\0' };
-    char *argv[2] = { prog_name, NULL };
     int status = snprintf(command, 64, "make %s", prog_name);
 
     DEBUG("%sRunning hot loader hook...%s", YELLOW, RESET);
@@ -78,11 +79,12 @@ int main(int argc, char **argv)
     bool ret;
     bool hot_reload = argc == 2 && !strcmp(argv[1], "hot-reload");
 
-    if (hot_reload)
-        DEBUG(
-            "%shot-reload%s hook set to [%s%s%s]",
-            YELLOW, RESET, CYAN, argv[0], RESET
-        );
+#ifdef DEBUG_MODE
+    if (hot_reload) {
+        DEBUG("%shot-reload%s hook set to [%s%s%s]",
+            YELLOW, RESET, CYAN, argv[0], RESET);
+    }
+#endif
     ret = wm_start();
     if (hot_reload)
         hot_reload_run(argv[0]);
