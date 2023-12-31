@@ -24,7 +24,7 @@ typedef struct {
     Window focused_window;
 } wm_state_t;
 
-void setup_grab(Display *display, Window root_id);
+int setup_grab(Display *display, Window root_id);
 void remove_grab(Display *display, Window root_id);
 
 #endif /* !WM_H_ */
