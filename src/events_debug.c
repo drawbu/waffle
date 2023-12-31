@@ -1,9 +1,10 @@
 #include <stdio.h>
+
 #include <X11/Xlib.h>
 
-#include "waffle/events.h"
-#include "debug.h"
 #include "colors.h"
+#include "debug.h"
+#include "waffle/events.h"
 
 DEBUG_USED
 void debug_mouse_motion(wm_state_t *wm_state, bool mode)

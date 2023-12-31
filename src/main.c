@@ -1,14 +1,15 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/Xlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <unistd.h>
+
+#include <X11/Xlib.h>
 
 #include "colors.h"
 #include "debug.h"
-#include "waffle/wm.h"
 #include "waffle/events.h"
+#include "waffle/wm.h"
 
 void wm_run(Display *display)
 {
@@ -50,9 +51,9 @@ int wm_start(void)
     return EXIT_SUCCESS;
 }
 
-static 
+static
 int hot_reload_run(char *prog_name)
-{   
+{
     char command[256] = { '\0' };
     char *argv[2] = { prog_name, NULL };
     int status = snprintf(command, 64, "make %s", prog_name);

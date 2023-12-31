@@ -6,6 +6,7 @@
     #ifdef DEBUG_MODE
 
         #include <stdio.h>
+
         #include "colors.h"
 
         #define HEAD_FMT BOLD BLUE "%s" RESET ":" PURPLE BOLD "%d" RESET ": "

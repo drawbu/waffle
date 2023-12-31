@@ -2,6 +2,7 @@
     #define EVENTS_H_
 
     #include "wm.h"
+
     #define ATTR(key) __attribute__((key))
 
 void handle_key_press(wm_state_t *wm_state);

@@ -1,6 +1,8 @@
 #ifndef COLORS_H_
     #define COLORS_H_
 
+    #include <stddef.h>
+
     #define COL_FMT(n) "\e[" #n "m"
 
     #define RESET COL_FMT(0)
