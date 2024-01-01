@@ -80,11 +80,12 @@ LDLIBS += -lXft
 LDLIBS += -lfontconfig
 
 VPATH := src
-SRC += main.c
+SRC += configure_request.c
+SRC += cursor_events.c
 SRC += events.c
 SRC += events_debug.c
-SRC += cursor_events.c
 SRC += grab.c
+SRC += main.c
 SRC += window_action.c
 
 LIB := $(BUILD_DIR)/libquell.a

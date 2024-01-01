@@ -14,6 +14,7 @@ void handle_enter(wm_state_t *wm_state);
 void handle_leave(wm_state_t *wm_state);
 
 void handle_map_request(wm_state_t *wm_state);
+void handle_configure_request(wm_state_t *wm_state);
 
 typedef void (*event_callback_t)(wm_state_t *);
 
@@ -28,6 +29,7 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
     [LeaveNotify] = &handle_leave,
 
     [MapRequest] = &handle_map_request,
+    [ConfigureRequest] = &handle_configure_request
 };
 
     #ifdef DEBUG_MODE
