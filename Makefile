@@ -107,6 +107,7 @@ $(BUILD_DIR)/debug $(BUILD_DIR)/release: $(BUILD_DIR)
 
 $(OUT_DEBUG): CFLAGS += -g3
 $(OUT_DEBUG): CFLAGS += -D DEBUG_MODE=1
+$(OUT_DEBUG): CFLAGS += -fsanitize=address,leak,undefined
 $(OUT_DEBUG): $(OBJ_DEBUG)
 	$(CC) -o $@ $(CFLAGS) $(OBJ_DEBUG) $(LDFLAGS) $(LDLIBS)
 	@ $(LOG_TIME) $@
