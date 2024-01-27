@@ -1,16 +1,18 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/Xlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <unistd.h>
+
+#include <X11/Xlib.h>
 
 #include "colors.h"
 #include "debug.h"
-#include "waffle/wm.h"
 #include "waffle/events.h"
+#include "waffle/wm.h"
 
-void wm_run(Display *display)
+static
+int wm_run(Display *display)
 {
     Window root = DefaultRootWindow(display);
     event_callback_t event_callback;
@@ -19,9 +21,10 @@ void wm_run(Display *display)
         .mouse = &(mouse_mov_t){ 0 }
     };
 
-    printf("%sWaffle%s is running!\n", RED, RESET);
     map_windows(display, root);
-    setup_grab(display, root);
+    if (setup_grab(display, root) < 0)
+        return -1;
+    printf("%sWaffle%s is running!\n", YELLOW, RESET);
     while (wm.is_running) {
         XNextEvent(display, &wm.event);
         event_callback = EVENT_TABLE[wm.event.type];
@@ -32,29 +35,31 @@ void wm_run(Display *display)
         event_callback(&wm);
     }
     remove_grab(display, root);
+    return 0;
 }
 
+static
 int wm_start(void)
 {
     Display *display = XOpenDisplay(NULL);
 
     if (display == NULL) {
-        fprintf(stderr, "Unable to open display\n");
-        return EXIT_FAILURE;
+        fprintf(stderr, "Unable to open display: [%s]\n", XDisplayName(NULL));
+        return -1;
     }
     DEBUG("Display size: [%d, %d]",
         XDisplayWidth(display, 0), XDisplayHeight(display, 0));
-    wm_run(display);
+    if (wm_run(display) < 0)
+        return -1;
     DEBUG_MSG("Closing server");
     XCloseDisplay(display);
-    return EXIT_SUCCESS;
+    return 0;
 }
 
-static 
+static
 int hot_reload_run(char *prog_name)
-{   
+{
     char command[256] = { '\0' };
-    char *argv[2] = { prog_name, NULL };
     int status = snprintf(command, 64, "make %s", prog_name);
 
     DEBUG("%sRunning hot loader hook...%s", YELLOW, RESET);
@@ -77,11 +82,13 @@ int main(int argc, char **argv)
     bool ret;
     bool hot_reload = argc == 2 && !strcmp(argv[1], "hot-reload");
 
-    if (hot_reload)
-        DEBUG(
-            "%shot-reload%s hook set to [%s%s%s]",
-            YELLOW, RESET, CYAN, argv[0], RESET
-        );
+    setbuf(stdout, NULL);
+#ifdef DEBUG_MODE
+    if (hot_reload) {
+        DEBUG("%shot-reload%s hook set to [%s%s%s]",
+            YELLOW, RESET, CYAN, argv[0], RESET);
+    }
+#endif
     ret = wm_start();
     if (hot_reload)
         hot_reload_run(argv[0]);

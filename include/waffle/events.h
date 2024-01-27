@@ -2,6 +2,7 @@
     #define EVENTS_H_
 
     #include "wm.h"
+
     #define ATTR(key) __attribute__((key))
 
 void handle_key_press(wm_state_t *wm_state);
@@ -13,6 +14,7 @@ void handle_enter(wm_state_t *wm_state);
 void handle_leave(wm_state_t *wm_state);
 
 void handle_map_request(wm_state_t *wm_state);
+void handle_configure_request(wm_state_t *wm_state);
 
 typedef void (*event_callback_t)(wm_state_t *);
 
@@ -27,14 +29,8 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
     [LeaveNotify] = &handle_leave,
 
     [MapRequest] = &handle_map_request,
+    [ConfigureRequest] = &handle_configure_request
 };
-
-static
-void get_motion_delta(XPoint *delta, XEvent *evt, mouse_mov_t *mouse)
-{
-    delta->x = (short) (evt->xbutton.x_root - mouse->start.x);
-    delta->y = (short) (evt->xbutton.y_root - mouse->start.y);
-}
 
     #ifdef DEBUG_MODE
 void debug_mouse_motion(wm_state_t *wm_state, bool mode);

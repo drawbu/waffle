@@ -5,6 +5,7 @@
 #include <X11/keysym.h>
 
 #include "waffle/events.h"
+#include "debug.h"
 
 void handle_key_press(wm_state_t *wm_state)
 {
