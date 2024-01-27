@@ -1,28 +1,56 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.05";
-    utils.url = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
   };
 
-  outputs = { self, nixpkgs, utils } @inputs:
-    utils.lib.eachDefaultSystem (system:
-      with import nixpkgs { inherit system; }; {
-        devShells.default = mkShell {
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      rec {
+        devShell = with pkgs; mkShell {
+          hardeningDisable = [ "all" ];
+          inputsFrom = [ packages.waffle ];
           packages = [
             python311Packages.compiledb
-            gcc12
-            glibc
             ltrace
-            gnumake
             man
             man-pages
-            xorg.libX11
-            xorg.libXft
-            xorg.libXfont
-            xorg.libXcursor
             mesa
             valgrind
           ];
+        };
+
+        formatter = pkgs.nixpkgs-fmt;
+
+        packages = rec {
+          default = waffle;
+          waffle = pkgs.stdenv.mkDerivation rec {
+            name = "waffle";
+            src = ./.;
+
+            hardeningDisable = [ "format" "fortify" ];
+            buildInputs = with pkgs; let
+              xlibraries = with xorg; [
+                libX11
+                libXft
+                libXfont
+                libXcursor
+              ];
+            in
+            [ gnumake ] ++ xlibraries;
+
+            installPhase = ''
+              runHook preInstall
+
+              mkdir -p $out/bin
+              cp ${name} $out/bin/${name}
+
+              runHook postInstall
+            '';
+          };
         };
       });
 }
