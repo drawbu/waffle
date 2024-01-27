@@ -4,10 +4,10 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#include "waffle/events.h"
+#include "wm.h"
 #include "debug.h"
 
-void handle_key_press(wm_state_t *wm_state)
+void handle_key_press(wm_t *wm_state)
 {
     XKeyEvent key = wm_state->event.xkey;
     KeySym key_pressed = XLookupKeysym(&key, 0);
@@ -29,7 +29,7 @@ void handle_key_press(wm_state_t *wm_state)
     XSendEvent(key.display, key.subwindow, False, KeyPressMask, (XEvent *)&key);
 }
 
-void handle_map_request(wm_state_t *wm_state)
+void handle_map_request(wm_t *wm_state)
 {
     XMapRequestEvent event = wm_state->event.xmaprequest;
 

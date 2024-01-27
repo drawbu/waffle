@@ -3,6 +3,8 @@
 
     #include <X11/Xlib.h>
 
+    #define ATTR(key) __attribute__((key))
+
 typedef struct {
     int x;
     int y;
@@ -20,13 +22,5 @@ typedef enum {
 
 void map_windows(Display *display, Window root);
 void set_window_on_top(Display *display, Window window);
-
-static const vec_t DIRECTION_OFFSET[DIRECTION_COUNT] = {
-    [ TOP_LEFT ] = { .x = 1, .y = 1, .width = -1, .height = -1 },
-    [ TOP_RIGHT ] = { .x = 0, .y = 1, .width = 1, .height = -1 },
-    [ BOTTOM_LEFT ] = { .x = 1, .y = 0, .width = -1, .height = 1 },
-    [ BOTTOM_RIGHT ] = { .x = 0, .y = 0, .width = 1, .height = 1 },
-};
-
 
 #endif /* !UTILS_H_ */

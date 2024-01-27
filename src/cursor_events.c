@@ -1,8 +1,14 @@
 #include "debug.h"
-#include "waffle/events.h"
-#include "waffle/wm.h"
+#include "wm.h"
 
-void handle_enter(wm_state_t *wm_state)
+const vec_t DIRECTION_OFFSET[DIRECTION_COUNT] = {
+    [ TOP_LEFT ] = { .x = 1, .y = 1, .width = -1, .height = -1 },
+    [ TOP_RIGHT ] = { .x = 0, .y = 1, .width = 1, .height = -1 },
+    [ BOTTOM_LEFT ] = { .x = 1, .y = 0, .width = -1, .height = 1 },
+    [ BOTTOM_RIGHT ] = { .x = 0, .y = 0, .width = 1, .height = 1 },
+};
+
+void handle_enter(wm_t *wm_state)
 {
     XCrossingEvent event = wm_state->event.xcrossing;
 
@@ -11,7 +17,7 @@ void handle_enter(wm_state_t *wm_state)
 
 }
 
-void handle_leave(wm_state_t *wm_state DEBUG_USED)
+void handle_leave(wm_t *wm_state DEBUG_USED)
 {
     DEBUG("unfocus: %lu", wm_state->focused_window);
 }
@@ -33,7 +39,7 @@ direction_t retrieve_mouse_side(mouse_mov_t *mouse, XEvent *event)
     return (direction_t)((bottom << 1) | right);
 }
 
-void handle_mouse_press(wm_state_t *wm_state)
+void handle_mouse_press(wm_t *wm_state)
 {
     Window window = wm_state->event.xbutton.subwindow;
     mouse_mov_t *mouse = wm_state->mouse;
@@ -53,7 +59,7 @@ void handle_mouse_press(wm_state_t *wm_state)
         wm_state->mouse, &wm_state->event);
 }
 
-void handle_mouse_release(wm_state_t *wm_state)
+void handle_mouse_release(wm_t *wm_state)
 {
     DEBUG_CALL(debug_mouse_motion, wm_state, false);
     DEBUG_CALL(debug_win_rect, 0, 0, false);
@@ -99,7 +105,7 @@ void resize_window(mouse_mov_t *mouse, XEvent *evt)
     );
 }
 
-void handle_mouse_motion(wm_state_t *wm_state)
+void handle_mouse_motion(wm_t *wm_state)
 {
     XEvent evt = wm_state->event;
     mouse_mov_t *mouse = wm_state->mouse;
@@ -114,4 +120,3 @@ void handle_mouse_motion(wm_state_t *wm_state)
         resize_window(mouse, &evt);
     DEBUG_CALL(debug_win_rect, evt.xbutton.display, mouse->window, true);
 }
-

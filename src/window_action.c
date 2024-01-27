@@ -3,7 +3,7 @@
 #include <X11/Xlib.h>
 
 #include "debug.h"
-#include "waffle/utils.h"
+#include "utils.h"
 
 void map_windows(Display *display, Window root)
 {

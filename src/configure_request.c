@@ -1,7 +1,7 @@
 #include "debug.h"
-#include "waffle/events.h"
+#include "wm.h"
 
-void handle_configure_request(wm_state_t *wm_state)
+void handle_configure_request(wm_t *wm_state)
 {
     XConfigureRequestEvent *evt = &wm_state->event.xconfigurerequest;
     Screen *scr = ScreenOfDisplay(evt->display, 0);

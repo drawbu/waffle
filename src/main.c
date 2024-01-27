@@ -8,15 +8,28 @@
 
 #include "colors.h"
 #include "debug.h"
-#include "waffle/events.h"
-#include "waffle/wm.h"
+#include "wm.h"
+
+static
+event_callback_t EVENT_TABLE[LASTEvent] = {
+    [KeyPress] = &handle_key_press,
+    [ButtonPress] = &handle_mouse_press,
+    [ButtonRelease] = &handle_mouse_release,
+    [MotionNotify] = &handle_mouse_motion,
+
+    [EnterNotify] = &handle_enter,
+    [LeaveNotify] = &handle_leave,
+
+    [MapRequest] = &handle_map_request,
+    [ConfigureRequest] = &handle_configure_request
+};
 
 static
 int wm_run(Display *display)
 {
     Window root = DefaultRootWindow(display);
     event_callback_t event_callback;
-    wm_state_t wm = {
+    wm_t wm = {
         .is_running = true,
         .mouse = &(mouse_mov_t){ 0 }
     };

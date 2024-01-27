@@ -2,8 +2,8 @@
 #include <X11/keysym.h>
 
 #include "debug.h"
-#include "waffle/utils.h"
-#include "waffle/wm.h"
+#include "utils.h"
+#include "wm.h"
 
 static char SELECT_INPUT_ERRORED = 0;
 

@@ -22,7 +22,26 @@ typedef struct {
     bool is_running;
     XEvent event;
     Window focused_window;
-} wm_state_t;
+} wm_t;
+
+
+void handle_key_press(wm_t *wm_state);
+void handle_mouse_press(wm_t *wm_state);
+void handle_mouse_release(wm_t *wm_state);
+void handle_mouse_motion(wm_t *wm_state);
+
+void handle_enter(wm_t *wm_state);
+void handle_leave(wm_t *wm_state);
+
+void handle_map_request(wm_t *wm_state);
+void handle_configure_request(wm_t *wm_state);
+
+typedef void (*event_callback_t)(wm_t *);
+
+    #ifdef DEBUG_MODE
+void debug_mouse_motion(wm_t *wm_state, bool mode);
+void debug_win_rect(Display *display, Window win, bool mode);
+    #endif
 
 int setup_grab(Display *display, Window root_id);
 void remove_grab(Display *display, Window root_id);

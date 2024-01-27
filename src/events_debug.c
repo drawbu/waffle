@@ -4,10 +4,10 @@
 
 #include "colors.h"
 #include "debug.h"
-#include "waffle/events.h"
+#include "wm.h"
 
 DEBUG_USED
-void debug_mouse_motion(wm_state_t *wm_state DEBUG_USED, bool mode)
+void debug_mouse_motion(wm_t *wm_state DEBUG_USED, bool mode)
 {
     static bool save = true;
 
