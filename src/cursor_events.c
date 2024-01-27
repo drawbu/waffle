@@ -8,12 +8,12 @@ const vec_t DIRECTION_OFFSET[DIRECTION_COUNT] = {
     [ BOTTOM_RIGHT ] = { .x = 0, .y = 0, .width = 1, .height = 1 },
 };
 
-void handle_enter(wm_t *wm_state)
+void handle_enter(wm_t *wm)
 {
-    XCrossingEvent event = wm_state->event.xcrossing;
+    XCrossingEvent event = wm->event.xcrossing;
 
-    wm_state->focused_window = event.window;
-    DEBUG("focus:    %lu", wm_state->focused_window);
+    wm->focused_window = event.window;
+    DEBUG("focus:    %lu", wm->focused_window);
 
 }
 
@@ -39,35 +39,30 @@ direction_t retrieve_mouse_side(mouse_mov_t *mouse, XEvent *event)
     return (direction_t)((bottom << 1) | right);
 }
 
-void handle_mouse_press(wm_t *wm_state)
+void handle_mouse_press(wm_t *wm)
 {
-    Window window = wm_state->event.xbutton.subwindow;
-    mouse_mov_t *mouse = wm_state->mouse;
+    Window window = wm->event.xbutton.subwindow;
 
-    if (window == None || window == wm_state->event.xbutton.root)
+    if (window == None || window == wm->event.xbutton.root)
         return;
-    mouse->button = wm_state->event.xbutton.button;
-    mouse->window = window;
-    mouse->start.x = (short)wm_state->event.xbutton.x_root;
-    mouse->start.y = (short)wm_state->event.xbutton.y_root;
+    wm->mouse.button = wm->event.xbutton.button;
+    wm->mouse.window = window;
+    wm->mouse.start.x = (short)wm->event.xbutton.x_root;
+    wm->mouse.start.y = (short)wm->event.xbutton.y_root;
     XGetWindowAttributes(
-        wm_state->event.xbutton.display,
-        mouse->window,
-        &mouse->window_attr
+        wm->event.xbutton.display,
+        wm->mouse.window,
+        &wm->mouse.window_attr
     );
-    wm_state->mouse->side = retrieve_mouse_side(
-        wm_state->mouse, &wm_state->event);
+    wm->mouse.side = retrieve_mouse_side(&wm->mouse, &wm->event);
 }
 
-void handle_mouse_release(wm_t *wm_state)
+void handle_mouse_release(wm_t *wm)
 {
-    DEBUG_CALL(debug_mouse_motion, wm_state, false);
+    DEBUG_CALL(debug_mouse_motion, wm, false);
     DEBUG_CALL(debug_win_rect, 0, 0, false);
-    wm_state->mouse->button = None;
-    if (wm_state->mouse->dragging) {
-        wm_state->mouse->dragging = false;
-        return;
-    }
+    wm->mouse.button = None;
+    wm->mouse.dragging = false;
 }
 
 static
@@ -105,18 +100,17 @@ void resize_window(mouse_mov_t *mouse, XEvent *evt)
     );
 }
 
-void handle_mouse_motion(wm_t *wm_state)
+void handle_mouse_motion(wm_t *wm)
 {
-    XEvent evt = wm_state->event;
-    mouse_mov_t *mouse = wm_state->mouse;
+    XEvent evt = wm->event;
 
-    DEBUG_CALL(debug_mouse_motion, wm_state, true);
-    if (mouse->button == None)
+    DEBUG_CALL(debug_mouse_motion, wm, true);
+    if (wm->mouse.button == None)
         return;
-    mouse->dragging = true;
-    if (mouse->button == Button1)
-        move_window(mouse, &evt);
-    else if (mouse->button == Button3)
-        resize_window(mouse, &evt);
-    DEBUG_CALL(debug_win_rect, evt.xbutton.display, mouse->window, true);
+    wm->mouse.dragging = true;
+    if (wm->mouse.button == Button1)
+        move_window(&wm->mouse, &evt);
+    else if (wm->mouse.button == Button3)
+        resize_window(&wm->mouse, &evt);
+    DEBUG_CALL(debug_win_rect, evt.xbutton.display, wm->mouse.window, true);
 }

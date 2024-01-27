@@ -4,8 +4,9 @@
 
 #include "debug.h"
 #include "utils.h"
+#include "wm.h"
 
-void map_windows(Display *display, Window root)
+void wm_map_windows(wm_t *wm)
 {
     unsigned int count;
     Window root_return;
@@ -13,7 +14,8 @@ void map_windows(Display *display, Window root)
     Window *windows = NULL;
     XWindowAttributes wa;
 
-    if (!XQueryTree(display, root, &root_return, &parent_return, &windows, &count)
+    if (!XQueryTree(wm->display, wm->root,
+            &root_return, &parent_return, &windows, &count)
         || windows == NULL
     ) {
         printf("Failed to query windows tree\n");
@@ -23,20 +25,20 @@ void map_windows(Display *display, Window root)
     for (unsigned int i = 0; i < count; i++) {
         Window window = windows[i];
 
-        if (!XGetWindowAttributes(display, window, &wa))
+        if (!XGetWindowAttributes(wm->display, window, &wa))
             continue;
         if (wa.map_state != IsViewable)
             continue;
         XSelectInput(
-            display, window,
+            wm->display, window,
             EnterWindowMask | LeaveWindowMask | SubstructureRedirectMask
         );
     }
     XFree(windows);
 }
 
-void set_window_on_top(Display *display, Window window)
+void set_window_on_top(Display *display, Window win)
 {
-    XRaiseWindow(display, window);
+    XRaiseWindow(display, win);
     XFlush(display);
 }

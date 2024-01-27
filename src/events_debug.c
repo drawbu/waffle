@@ -19,7 +19,7 @@ void debug_mouse_motion(wm_t *wm_state DEBUG_USED, bool mode)
         DEBUG("%sEvent%s: Mouse released", YELLOW, RESET);
         return;
     }
-    DEBUG("-> Mouse button: %s%d%s", BLUE, wm_state->mouse->button, RESET);
+    DEBUG("-> Mouse button: %s%d%s", BLUE, wm_state->mouse.button, RESET);
 }
 
 DEBUG_USED

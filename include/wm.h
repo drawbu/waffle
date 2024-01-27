@@ -18,32 +18,36 @@ typedef struct {
 } mouse_mov_t;
 
 typedef struct {
-    mouse_mov_t *mouse;
-    bool is_running;
-    XEvent event;
+    Display *display;
+    Window root;
     Window focused_window;
+    XEvent event;
+    mouse_mov_t mouse;
+    bool is_running;
 } wm_t;
 
+void handle_key_press(wm_t *wm);
+void handle_mouse_press(wm_t *wm);
+void handle_mouse_release(wm_t *wm);
+void handle_mouse_motion(wm_t *wm);
 
-void handle_key_press(wm_t *wm_state);
-void handle_mouse_press(wm_t *wm_state);
-void handle_mouse_release(wm_t *wm_state);
-void handle_mouse_motion(wm_t *wm_state);
+void handle_enter(wm_t *wm);
+void handle_leave(wm_t *wm);
 
-void handle_enter(wm_t *wm_state);
-void handle_leave(wm_t *wm_state);
+void handle_map_request(wm_t *wm);
+void handle_configure_request(wm_t *wm);
 
-void handle_map_request(wm_t *wm_state);
-void handle_configure_request(wm_t *wm_state);
+void set_window_on_top(Display *display, Window win);
 
 typedef void (*event_callback_t)(wm_t *);
 
     #ifdef DEBUG_MODE
-void debug_mouse_motion(wm_t *wm_state, bool mode);
+void debug_mouse_motion(wm_t *wm, bool mode);
 void debug_win_rect(Display *display, Window win, bool mode);
     #endif
 
-int setup_grab(Display *display, Window root_id);
-void remove_grab(Display *display, Window root_id);
+int wm_setup_grab(wm_t *wm);
+void wm_map_windows(wm_t *wm);
+void wm_remove_grab(wm_t *wm);
 
 #endif /* !WM_H_ */

@@ -7,9 +7,9 @@
 #include "wm.h"
 #include "debug.h"
 
-void handle_key_press(wm_t *wm_state)
+void handle_key_press(wm_t *wm)
 {
-    XKeyEvent key = wm_state->event.xkey;
+    XKeyEvent key = wm->event.xkey;
     KeySym key_pressed = XLookupKeysym(&key, 0);
     unsigned int modifiers = key.state;
 
@@ -20,10 +20,10 @@ void handle_key_press(wm_t *wm_state)
     }
     if (modifiers & Mod4Mask && key_pressed == XK_Escape) {
         printf("Quitting\n");
-        wm_state->is_running = false;
+        wm->is_running = false;
         return;
     }
-    if (key.subwindow == None || key.subwindow == wm_state->event.xkey.root)
+    if (key.subwindow == None || key.subwindow == wm->event.xkey.root)
         return;
     key.window = key.subwindow;
     XSendEvent(key.display, key.subwindow, False, KeyPressMask, (XEvent *)&key);

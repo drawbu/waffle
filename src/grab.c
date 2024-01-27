@@ -36,7 +36,7 @@ int attempt_input_selection_setup(Display *display, Window root_id)
     return 0;
 }
 
-int setup_grab(Display *display, Window root_id)
+int wm_setup_grab(wm_t *wm)
 {
     static unsigned int grab_event_pointer = (
         PointerMotionMask
@@ -45,20 +45,20 @@ int setup_grab(Display *display, Window root_id)
     );
 
     DEBUG("GEP: %d", grab_event_pointer);
-    if (attempt_input_selection_setup(display, root_id) < 0)
+    if (attempt_input_selection_setup(wm->display, wm->root) < 0)
         return -1;
     XGrabButton(
-        display, Button1Mask | Button3Mask, Mod4Mask,
-        root_id, False, grab_event_pointer,
+        wm->display, Button1Mask | Button3Mask, Mod4Mask,
+        wm->root, False, grab_event_pointer,
         GrabModeAsync, GrabModeSync, None, None);
-    XGrabKeyboard(display, root_id, True,
+    XGrabKeyboard(wm->display, wm->root, True,
         GrabModeAsync, GrabModeAsync, CurrentTime);
     return 0;
 }
 
-void remove_grab(Display *display, Window root_id)
+void wm_remove_grab(wm_t *wm)
 {
-    XUngrabButton(display, AnyButton, AnyModifier, root_id);
-    XUngrabKeyboard(display, CurrentTime);
+    XUngrabButton(wm->display, AnyButton, AnyModifier, wm->root);
+    XUngrabKeyboard(wm->display, CurrentTime);
 }
 

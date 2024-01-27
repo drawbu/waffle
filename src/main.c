@@ -25,47 +25,37 @@ event_callback_t EVENT_TABLE[LASTEvent] = {
 };
 
 static
-int wm_run(Display *display)
+int wm_run(wm_t *wm)
 {
-    Window root = DefaultRootWindow(display);
     event_callback_t event_callback;
-    wm_t wm = {
-        .is_running = true,
-        .mouse = &(mouse_mov_t){ 0 }
-    };
 
-    map_windows(display, root);
-    if (setup_grab(display, root) < 0)
-        return -1;
-    printf("%sWaffle%s is running!\n", YELLOW, RESET);
-    while (wm.is_running) {
-        XNextEvent(display, &wm.event);
-        event_callback = EVENT_TABLE[wm.event.type];
+    while (wm->is_running) {
+        XNextEvent(wm->display, &wm->event);
+        event_callback = EVENT_TABLE[wm->event.type];
         if (!event_callback) {
-            DEBUG("Missing callback for event [%d]", wm.event.type);
+            DEBUG("Missing callback for event [%d]", wm->event.type);
             continue;
         }
-        event_callback(&wm);
+        event_callback(wm);
     }
-    remove_grab(display, root);
     return 0;
 }
 
 static
-int wm_start(void)
+int wm_init(wm_t *wm)
 {
-    Display *display = XOpenDisplay(NULL);
-
-    if (display == NULL) {
+    wm->display = XOpenDisplay(NULL);
+    if (wm->display == NULL) {
         fprintf(stderr, "Unable to open display: [%s]\n", XDisplayName(NULL));
         return -1;
     }
     DEBUG("Display size: [%d, %d]",
-        XDisplayWidth(display, 0), XDisplayHeight(display, 0));
-    if (wm_run(display) < 0)
+        XDisplayWidth(wm->display, 0), XDisplayHeight(wm->display, 0));
+    wm->root = DefaultRootWindow(wm->display);
+    wm_map_windows(wm);
+    if (wm_setup_grab(wm) < 0)
         return -1;
-    DEBUG_MSG("Closing server");
-    XCloseDisplay(display);
+    printf("%sWaffle%s is running!\n", YELLOW, RESET);
     return 0;
 }
 
@@ -90,10 +80,17 @@ int hot_reload_run(char *prog_name)
     return EXIT_FAILURE;
 }
 
+static
+void wm_finalize(wm_t *wm) {
+    DEBUG_MSG("Closing server");
+    wm_remove_grab(wm);
+    XCloseDisplay(wm->display);
+}
+
 int main(int argc, char **argv)
 {
-    bool ret;
     bool hot_reload = argc == 2 && !strcmp(argv[1], "hot-reload");
+    wm_t wm = { .is_running = true };
 
     setbuf(stdout, NULL);
 #ifdef DEBUG_MODE
@@ -102,9 +99,13 @@ int main(int argc, char **argv)
             YELLOW, RESET, CYAN, argv[0], RESET);
     }
 #endif
-    ret = wm_start();
+    if (wm_init(&wm) < 0)
+        return EXIT_FAILURE;
+    if (wm_run(&wm) < 0)
+        return EXIT_FAILURE;
+    wm_finalize(&wm);
     if (hot_reload)
         hot_reload_run(argv[0]);
-    return ret;
+    return EXIT_SUCCESS;
 }
 

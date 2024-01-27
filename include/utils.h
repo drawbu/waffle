@@ -20,7 +20,4 @@ typedef enum {
     DIRECTION_COUNT
 } direction_t;
 
-void map_windows(Display *display, Window root);
-void set_window_on_top(Display *display, Window window);
-
 #endif /* !UTILS_H_ */

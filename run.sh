@@ -7,6 +7,7 @@ make $target
 [ -e $target ] || exit
 
 xephyr=$(ps -ef | grep Xephyr | grep -v "grep" | wc -l)
+unset XDG_SEAT
 
 if [ $xephyr -eq 0 ]
 then
