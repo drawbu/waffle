@@ -30,9 +30,9 @@ int attempt_input_selection_setup(Display *display, Window root_id)
             "Another Window Manager is running on this display [%s]\n"
             "Cannot continue, exiting...\n",
             XDisplayName(NULL));
+        XCloseDisplay(display);
         return -1;
     }
-
     return 0;
 }
 
